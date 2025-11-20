@@ -14,8 +14,4 @@ class LibraryDetailView(DetailView):
     template_name = 'library_detail.html'
     context_object_name = 'library' 
 
-# Optionally override get_queryset to prefetch books for efficiency
-    def get_queryset(self):
-        # prefetch_related reduces DB hits when accessing many-to-many relations
-        return super().get_queryset().prefetch_related('books__author')
 
