@@ -1,7 +1,6 @@
-# relationship_app/urls.py
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views 
+from . import views
 
 app_name = 'relationship_app'
 
@@ -16,9 +15,9 @@ urlpatterns = [
     path('librarian/', views.librarian_view, name='librarian_view'),
     path('member/', views.member_view, name='member_view'),
     
-    # Book management URLs with permissions (NEWLY ADDED)
-    path('books/add/', views.add_book, name='add_book'),
-    path('books/<int:book_id>/edit/', views.edit_book, name='edit_book'),
+    # Book management URLs with permissions - UPDATE THESE PATHS
+    path('add_book/', views.add_book, name='add_book'),           # ← CHANGED from 'books/add/'
+    path('edit_book/<int:book_id>/', views.edit_book, name='edit_book'),  # ← CHANGED from 'books/<int:book_id>/edit/'
     path('books/<int:book_id>/delete/', views.delete_book, name='delete_book'),
     
     # Existing library URLs
