@@ -1,21 +1,21 @@
-from django.shortcuts import render, redirect, get_object_or_404 # ← ADDED get_object_or_404
-from .models import Library, Book, UserProfile # ← UserProfile already added
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Library, Book, UserProfile
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test, permission_required # ← ADDED permission_required
-# from .forms import BookForm # ← You must create this form in forms.py for this code to run
+from django.contrib.auth.decorators import user_passes_test, permission_required
+from .forms import BookForm  # ← UNCOMMENT THIS LINE
 
 # --- Role Check Functions ---
 def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Admin'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'  # ← FIXED: userprofile not profile
 
 def is_librarian(user):
-    return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Librarian'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'  # ← FIXED: userprofile not profile
 
 def is_member(user):
-    return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Member'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'  # ← FIXED: userprofile not profile
 
 
 # --- Role-based Views (Restricted Access) ---
@@ -49,12 +49,11 @@ class LibraryDetailView(DetailView):
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
 
-# --- Permission-protected views for Book operations (NEWLY ADDED) ---
+# --- Permission-protected views for Book operations ---
 
 @permission_required('relationship_app.can_add_book', login_url='/login/')
 def add_book(request):
     """Allows adding a new book, protected by the 'can_add_book' permission."""
-    from .forms import BookForm # Temporary import to allow testing without forms.py, REMOVE IN PRODUCTION
     if request.method == 'POST':
         form = BookForm(request.POST)
         if form.is_valid():
@@ -68,7 +67,6 @@ def add_book(request):
 @permission_required('relationship_app.can_change_book', login_url='/login/')
 def edit_book(request, book_id):
     """Allows editing an existing book, protected by the 'can_change_book' permission."""
-    from .forms import BookForm # Temporary import
     book = get_object_or_404(Book, id=book_id)
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
