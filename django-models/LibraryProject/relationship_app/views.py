@@ -4,18 +4,19 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test, permission_required
-from .forms import BookForm  # ← UNCOMMENT THIS LINE
+from django.contrib.auth.decorators import permission_required  # ← SEPARATE IMPORT
+from django.contrib.auth.decorators import user_passes_test     # ← SEPARATE IMPORT
+from .forms import BookForm
 
 # --- Role Check Functions ---
 def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'  # ← FIXED: userprofile not profile
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
 def is_librarian(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'  # ← FIXED: userprofile not profile
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
 
 def is_member(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'  # ← FIXED: userprofile not profile
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 
 # --- Role-based Views (Restricted Access) ---
