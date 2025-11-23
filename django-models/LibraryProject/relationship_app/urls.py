@@ -1,13 +1,13 @@
 # relationship_app/urls.py
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import list_books, LibraryDetailView, register_view
+from .views import list_books, LibraryDetailView, register  # ← Change register_view to register
 
 app_name = 'relationship_app'
 
 urlpatterns = [
     # Authentication URLs
-    path('register/', register_view, name='register'),
+    path('register/', register, name='register'),  # ← Use register directly
     path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
     
