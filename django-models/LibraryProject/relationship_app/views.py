@@ -1,31 +1,24 @@
-from django.shortcuts import render, redirect
-from .models import Library, Book, UserProfile # ← ADDED UserProfile
+from django.shortcuts import render, redirect, get_object_or_404 # ← ADDED get_object_or_404
+from .models import Library, Book, UserProfile # ← UserProfile already added
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test # ← ADDED
+from django.contrib.auth.decorators import user_passes_test, permission_required # ← ADDED permission_required
+# from .forms import BookForm # ← You must create this form in forms.py for this code to run
 
 # --- Role Check Functions ---
-# These functions check the 'role' field on the UserProfile linked to the authenticated user.
-
 def is_admin(user):
-    # Check if user is authenticated and has a profile with the role 'Admin'
     return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Admin'
 
 def is_librarian(user):
-    # Check if user is authenticated and has a profile with the role 'Librarian'
     return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Librarian'
 
 def is_member(user):
-    # Check if user is authenticated and has a profile with the role 'Member'
-    # NOTE: Since related_name='profile' was used in models.py, we check for 'user.profile'
     return user.is_authenticated and hasattr(user, 'profile') and user.profile.role == 'Member'
 
 
 # --- Role-based Views (Restricted Access) ---
-# The user_passes_test decorator redirects to the login_url if the test function returns False.
-
 @user_passes_test(is_admin, login_url='/login/')
 def admin_view(request):
     """View only accessible to users with the 'Admin' role."""
@@ -55,6 +48,48 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+
+# --- Permission-protected views for Book operations (NEWLY ADDED) ---
+
+@permission_required('relationship_app.can_add_book', login_url='/login/')
+def add_book(request):
+    """Allows adding a new book, protected by the 'can_add_book' permission."""
+    from .forms import BookForm # Temporary import to allow testing without forms.py, REMOVE IN PRODUCTION
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Book '{form.cleaned_data['title']}' added successfully!")
+            return redirect('relationship_app:list_books')
+    else:
+        form = BookForm()
+    return render(request, 'relationship_app/add_book.html', {'form': form})
+
+@permission_required('relationship_app.can_change_book', login_url='/login/')
+def edit_book(request, book_id):
+    """Allows editing an existing book, protected by the 'can_change_book' permission."""
+    from .forms import BookForm # Temporary import
+    book = get_object_or_404(Book, id=book_id)
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Book '{book.title}' updated successfully!")
+            return redirect('relationship_app:list_books')
+    else:
+        form = BookForm(instance=book)
+    return render(request, 'relationship_app/edit_book.html', {'form': form, 'book': book})
+
+@permission_required('relationship_app.can_delete_book', login_url='/login/')
+def delete_book(request, book_id):
+    """Allows deleting a book, protected by the 'can_delete_book' permission."""
+    book = get_object_or_404(Book, id=book_id)
+    if request.method == 'POST':
+        book_title = book.title
+        book.delete()
+        messages.warning(request, f"Book '{book_title}' deleted.")
+        return redirect('relationship_app:list_books')
+    return render(request, 'relationship_app/delete_book.html', {'book': book})
 
 # --- AUTHENTICATION VIEWS ---
 
