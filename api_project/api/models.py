@@ -4,9 +4,8 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.Charfield(max_length=100)
     published_date = models.DateField(null=True, blank=True)
-    created at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} by {self.author}"
-    
     
