@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=*kioofa%f+9)7(1=@g#t)fl1b*!_5-knzsacqx1+etifjj_fa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -124,3 +124,29 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'  # Specify the custom user model
+
+# 2. Browser-side protections
+# Prevents the browser from "sniffing" the content type away from what the server says it is
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enables the browser's XSS filter and blocks the page if an attack is detected
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevents your site from being rendered in an iframe (prevents Clickjacking)
+X_FRAME_OPTIONS = 'DENY'
+
+# 3. Cookie Security (Forces HTTPS)
+# These ensure cookies are only sent over HTTPS connections
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# 4. HTTP Strict Transport Security (HSTS)
+# Tells the browser to always use HTTPS for this site
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# 5. Content Security Policy (Requires: pip install django-csp)
+# Add 'csp.middleware.CSPMiddleware' to your MIDDLEWARE list
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
