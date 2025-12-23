@@ -97,3 +97,15 @@ def advanced_search(request):
         'author_query': author_query,
         'year_query': year_query
     })
+
+def search_books(request):
+    form = ExampleForm(request.GET)
+    books = Book.objects.all()
+
+    if form.is_valid():
+        # Cleaned_data ensures the input is sanitized and safe
+        query = form.cleaned_data.get('search_query')
+        if query:
+            books = Book.objects.filter(title__icontains=query)
+
+    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
