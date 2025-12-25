@@ -1,4 +1,3 @@
-from django import models
 from django import forms
 from .models import Book
 
@@ -10,4 +9,4 @@ class BookForm(forms.ModelForm):
     # A form for creating or editing books securely
     class Meta:
         model = Book
-        fields = ['title', 'author', 'library']
+        fields = ['title', 'author', 'publication_year']

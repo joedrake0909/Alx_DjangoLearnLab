@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Advanced Book Search</title>
+</head>
+<body>
+    <h1>Advanced Book Search</h1>
+    <form method="get">
+        <p>
+            <label for="title">Title</label>
+            <input id="title" type="text" name="title" value="{{ title_query }}" placeholder="Title contains...">
+        </p>
+        <p>
+            <label for="author">Author</label>
+            <input id="author" type="text" name="author" value="{{ author_query }}" placeholder="Author contains...">
+        </p>
+        <p>
+            <label for="year">Publication Year</label>
+            <input id="year" type="text" name="year" value="{{ year_query }}" placeholder="e.g. 2020">
+        </p>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if books %}
+        <h2>Results</h2>
+        <ul>
+            {% for book in books %}
+                <li>{{ book.title }} by {{ book.author }} ({{ book.publication_year }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No books found.</p>
+    {% endif %}
+</body>
+</html>

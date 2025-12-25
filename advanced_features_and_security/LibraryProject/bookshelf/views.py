@@ -7,7 +7,7 @@ from .forms import BookForm  # Assuming you have a BookForm
 from .forms import ExampleForm
 
 # View to list books with search (Requires can_view)
-@permission_required('relationship_app.can_view', raise_exception=True)
+@permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     # SECURE: Using the ORM handles parameterization automatically
     query = request.GET.get('q', '')
@@ -22,13 +22,13 @@ def book_list(request):
     else:
         books = Book.objects.all()
     
-    return render(request, 'relationship_app/book_list.html', {
-        'books': books, 
+    return render(request, 'bookshelf/book_list.html', {
+        'books': books,
         'query': query
     })
 
 # View to add a book (Requires can_create)
-@permission_required('relationship_app.can_create', raise_exception=True)
+@permission_required('bookshelf.can_create', raise_exception=True)
 def add_book(request):
     if request.method == "POST":
         form = BookForm(request.POST)
@@ -41,10 +41,10 @@ def add_book(request):
     else:
         form = BookForm()
     
-    return render(request, 'relationship_app/add_book.html', {'form': form})
+    return render(request, 'bookshelf/add_book.html', {'form': form})
 
 # View to edit a book (Requires can_edit)
-@permission_required('relationship_app.can_edit', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     
@@ -56,13 +56,13 @@ def edit_book(request, pk):
     else:
         form = BookForm(instance=book)
     
-    return render(request, 'relationship_app/edit_book.html', {
-        'form': form, 
+    return render(request, 'bookshelf/edit_book.html', {
+        'form': form,
         'book': book
     })
 
 # View to delete a book (Requires can_delete)
-@permission_required('relationship_app.can_delete', raise_exception=True)
+@permission_required('bookshelf.can_delete', raise_exception=True)
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     
@@ -70,10 +70,10 @@ def delete_book(request, pk):
         book.delete()
         return redirect('book_list')
     
-    return render(request, 'relationship_app/delete_confirm.html', {'book': book})
+    return render(request, 'bookshelf/delete_confirm.html', {'book': book})
 
 # Advanced search view (optional - for more complex searches)
-@permission_required('relationship_app.can_view', raise_exception=True)
+@permission_required('bookshelf.can_view', raise_exception=True)
 def advanced_search(request):
     books = Book.objects.all()
     
@@ -90,9 +90,9 @@ def advanced_search(request):
     if year_query:
         # Validate year is a number before using
         if year_query.isdigit():
-            books = books.filter(published_year=year_query)
+            books = books.filter(publication_year=year_query)
     
-    return render(request, 'relationship_app/advanced_search.html', {
+    return render(request, 'bookshelf/advanced_search.html', {
         'books': books,
         'title_query': title_query,
         'author_query': author_query,
@@ -109,4 +109,4 @@ def search_books(request):
         if query:
             books = Book.objects.filter(title__icontains=query)
 
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
+    return render(request, 'bookshelf/form_example.html', {'form': form, 'books': books})
