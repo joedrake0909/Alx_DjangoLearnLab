@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-=*kioofa%f+9)7(1=@g#t)fl1b*!_5-knzsacqx1+etifjj_fa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -135,18 +135,21 @@ SECURE_BROWSER_XSS_FILTER = True
 # Prevents your site from being rendered in an iframe (prevents Clickjacking)
 X_FRAME_OPTIONS = 'DENY'
 
-# 3. Cookie Security (Forces HTTPS)
+# 3. Enforce HTTPS redirects at Django level
+SECURE_SSL_REDIRECT = True
+
+# 4. Cookie Security (Forces HTTPS)
 # These ensure cookies are only sent over HTTPS connections
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# 4. HTTP Strict Transport Security (HSTS)
+# 5. HTTP Strict Transport Security (HSTS)
 # Tells the browser to always use HTTPS for this site
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# 5. Content Security Policy (Requires: pip install django-csp)
+# 6. Content Security Policy (Requires: pip install django-csp)
 # Add 'csp.middleware.CSPMiddleware' to your MIDDLEWARE list
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
