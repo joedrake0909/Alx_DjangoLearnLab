@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import permission_required
 from django.db.models import Q  # For more complex queries
 from .models import Book
 from .forms import BookForm  # Assuming you have a BookForm
+from .forms import ExampleForm
 
 # View to list books with search (Requires can_view)
 @permission_required('relationship_app.can_view', raise_exception=True)
