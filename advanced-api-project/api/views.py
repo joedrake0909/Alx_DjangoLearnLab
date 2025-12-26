@@ -1,5 +1,7 @@
 ﻿from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer
 
@@ -26,10 +28,54 @@ class BookListView(generics.ListAPIView):
     - Queryset filtering
     - Pagination (if configured)
     - Serialization of Book instances
+    - Filtering by title, author, and publication_year
+    - Searching on title and author name
+    - Ordering by title and publication_year
+    
+    Query Parameters for Filtering:
+    - ?title=<title> - Filter by book title (exact match)
+    - ?author=<author_id> - Filter by author ID
+    - ?publication_year=<year> - Filter by publication year
+    
+    Query Parameters for Searching:
+    - ?search=<query> - Search in title and author name fields
+    
+    Query Parameters for Ordering:
+    - ?ordering=title - Order by title (ascending)
+    - ?ordering=-title - Order by title (descending)
+    - ?ordering=publication_year - Order by publication year (ascending)
+    - ?ordering=-publication_year - Order by publication year (descending)
+    
+    Example requests:
+    - GET /books/?title=Django - Filter books with "Django" in title
+    - GET /books/?author=1 - Filter books by author with ID 1
+    - GET /books/?publication_year=2020 - Filter books published in 2020
+    - GET /books/?search=django - Search for books with "django" in title or author
+    - GET /books/?ordering=title - Order books by title alphabetically
+    - GET /books/?ordering=-publication_year - Order books by year (newest first)
+    - GET /books/?title=Django&ordering=-publication_year - Combine filtering and ordering
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = []  # No authentication required for listing books
+    
+    # Configure filter backends for filtering, searching, and ordering
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    
+    # Filtering configuration
+    # Specify which fields can be filtered using exact matches
+    filterset_fields = ['title', 'author', 'publication_year']
+    
+    # Search configuration
+    # Specify which fields are searchable with text search queries
+    # The search query will look for matches in these fields
+    search_fields = ['title', 'author__name']  # author__name allows searching by author name
+    
+    # Ordering configuration
+    # Specify which fields can be used for ordering results
+    # Users can prefix field names with '-' for descending order
+    ordering_fields = ['title', 'publication_year']
+    ordering = ['title']  # Default ordering by title (ascending)
 
 
 # DetailView - Retrieve a Single Book by ID
