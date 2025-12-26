@@ -37,21 +37,23 @@ urlpatterns = [
     path('books/create/', BookCreateView.as_view(), name='book-create'),
     
     # Update an existing book (full or partial)
-    # Endpoint: PUT /books/<int:pk>/update/ or PATCH /books/<int:pk>/update/
+    # Endpoint: PUT /books/update/ or PATCH /books/update/ or PUT /books/<int:pk>/update/ or PATCH /books/<int:pk>/update/
     # View: BookUpdateView
     # Permission: Authenticated users only
     # Request Body (PUT): All fields required
     # Request Body (PATCH): Only fields to update
     # Returns: JSON object of the updated book
     # Example: PUT /books/1/update/ updates book with ID 1
+    path('books/update/', BookUpdateView.as_view(), name='book-update-base'),
     path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book-update'),
     
     # Delete a book
-    # Endpoint: DELETE /books/<int:pk>/delete/
+    # Endpoint: DELETE /books/delete/ or DELETE /books/<int:pk>/delete/
     # View: BookDeleteView
     # Permission: Authenticated users only
     # Returns: 204 No Content on successful deletion
     # Example: DELETE /books/1/delete/ deletes book with ID 1
+    path('books/delete/', BookDeleteView.as_view(), name='book-delete-base'),
     path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book-delete'),
 ]
 
