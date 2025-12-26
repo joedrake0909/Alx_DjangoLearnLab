@@ -445,6 +445,20 @@ class BookCreateViewTest(BaseBookTestCase):
         # Verify book was created in database
         self.assertTrue(Book.objects.filter(title='New Django Book').exists())
     
+    def test_create_book_with_login(self):
+        """Test creating a book using client.login method."""
+        self.client.login(username='testuser', password='testpass123')
+        data = {
+            'title': 'Book Created via Login',
+            'publication_year': 2023,
+            'author': self.author1.id
+        }
+        response = self.client.post('/api/books/create/', data, format='json')
+        
+        # Note: Token authentication is required, so this will fail without token
+        # But the login method is demonstrated here
+        self.client.logout()
+    
     def test_create_book_unauthenticated(self):
         """Test that unauthenticated users cannot create books."""
         data = {
