@@ -1,6 +1,5 @@
-﻿from rest_framework import generics
+﻿from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework
 from .models import Book
@@ -61,7 +60,7 @@ class BookListView(generics.ListAPIView):
     permission_classes = []  # No authentication required for listing books
     
     # Configure filter backends for filtering, searching, and ordering
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     
     # Filtering configuration
     # Specify which fields can be filtered using exact matches
