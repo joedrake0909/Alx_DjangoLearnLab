@@ -170,18 +170,18 @@ def search_posts(request):
     return render(request, 'blog/search_results.html', context)
 
 
-class TaggedPostListView(ListView):
+class PostByTagListView(ListView):
     model = Post
     template_name = 'blog/tagged_posts.html'
     context_object_name = 'posts'
     paginate_by = 5
 
     def get_queryset(self):
-        tag_name = self.kwargs.get('tag_name')
-        return Post.objects.filter(tags__name=tag_name).order_by('-published_date')
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__name=tag_slug).order_by('-published_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tag_name'] = self.kwargs.get('tag_name')
+        context['tag_name'] = self.kwargs.get('tag_slug')
         return context
     
