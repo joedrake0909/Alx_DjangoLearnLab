@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+<div class="comment-form-container">
+    <h1>Edit Comment</h1>
+    
+    <div class="post-reference">
+        <h3>On post: {{ object.post.title }}</h3>
+        <p class="post-meta">Original comment posted on {{ object.created_at|date:"F d, Y" }}</p>
+    </div>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.content.id_for_label }}">Your Comment:</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="error">{{ form.content.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Comment</button>
+            <a href="{% url 'post-detail' object.post.pk %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -26,6 +26,53 @@
         {% endif %}
     </article>
     
+    <hr>
+    
+    <!-- Comments Section -->
+    <div class="comments-section">
+        <h2>Comments ({{ post.comments.count }})</h2>
+        
+        {% if user.is_authenticated %}
+            <div class="add-comment-link">
+                <a href="{% url 'add-comment' post.pk %}" class="btn btn-primary">Add Comment</a>
+            </div>
+        {% else %}
+            <p><a href="{% url 'login' %}">Login</a> to add a comment.</p>
+        {% endif %}
+        
+        <div class="comments-list">
+            {% if post.comments.all %}
+                {% for comment in post.comments.all %}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <strong>{{ comment.author.username }}</strong>
+                            <span class="comment-date">
+                                {{ comment.created_at|date:"F d, Y \a\t g:i A" }}
+                                {% if comment.created_at != comment.updated_at %}
+                                    (edited)
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="comment-content">
+                            <p>{{ comment.content|linebreaks }}</p>
+                        </div>
+                        
+                        {% if user == comment.author %}
+                            <div class="comment-actions">
+                                <a href="{% url 'comment-update' comment.pk %}" class="btn btn-sm">Edit</a>
+                                <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                {% endfor %}
+            {% else %}
+                <p>No comments yet. Be the first to comment!</p>
+            {% endif %}
+        </div>
+    </div>
+    
     <div class="post-navigation">
         <a href="{% url 'post-list' %}" class="btn btn-link">← Back to all posts</a>
     </div>
