@@ -29,7 +29,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a new user with hashed password and generate token."""
         validated_data.pop('password_confirm')
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
@@ -45,7 +45,7 @@ class UserLoginSerializer(serializers.Serializer):
     """
     Serializer for user login.
     """
-    username = serializers.CharField(required=True)
+    username = serializers.CharField()
     password = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'})
 
 
