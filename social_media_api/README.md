@@ -20,7 +20,8 @@ A Django REST Framework-based Social Media API with user authentication, token-b
 - **User Registration**: New users can register with username, email, and password
 - **User Login**: Existing users can log in and receive an authentication token
 - **Profile Management**: Authenticated users can view and update their profile
-- **Social Features**: Users have bio, profile picture, and followers functionality
+- **Posts & Comments**: Create, list, update, and delete posts and comments with ownership checks
+- **Search & Pagination**: Search posts by title/content and paginate post/comment lists
 
 ## Technologies Used
 
@@ -44,6 +45,16 @@ social_media_api/
 │   ├── views.py          # API views for registration, login, profile
 │   ├── urls.py           # URL routing for accounts app
 │   ├── tests.py
+│   └── migrations/
+│       └── 0001_initial.py
+├── posts/
+│   ├── __init__.py
+│   ├── admin.py          # Admin configuration for Post/Comment
+│   ├── apps.py
+│   ├── models.py         # Post and Comment models
+│   ├── serializers.py    # DRF serializers for posts/comments
+│   ├── views.py          # ViewSets for posts/comments with permissions
+│   ├── urls.py           # Router registrations
 │   └── migrations/
 │       └── 0001_initial.py
 └── social_media_api/
@@ -92,14 +103,36 @@ The API will be available at `http://127.0.0.1:8000/`
 
 ## API Endpoints
 
-### Base URL: `http://127.0.0.1:8000/api/accounts/`
+### Base URL: `http://127.0.0.1:8000/api/`
 
-| Endpoint | Method | Description | Authentication Required |
-|----------|--------|-------------|------------------------|
+**Accounts**
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
 | `/api/accounts/register/` | POST | Register a new user | No |
 | `/api/accounts/login/` | POST | Login and receive token | No |
 | `/api/accounts/profile/` | GET | Retrieve user profile | Yes |
 | `/api/accounts/profile/` | PUT/PATCH | Update user profile | Yes |
+
+**Posts**
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/posts/` | GET | List posts (paginated, searchable by `search` query) | Yes |
+| `/api/posts/` | POST | Create a post (title, content) | Yes |
+| `/api/posts/{id}/` | GET | Retrieve a single post | Yes |
+| `/api/posts/{id}/` | PUT/PATCH | Update your own post | Yes |
+| `/api/posts/{id}/` | DELETE | Delete your own post | Yes |
+
+**Comments**
+
+| Endpoint | Method | Description | Auth Required |
+|----------|--------|-------------|---------------|
+| `/api/comments/` | GET | List comments (filter by `?post=<post_id>`) | Yes |
+| `/api/comments/` | POST | Create a comment on a post | Yes |
+| `/api/comments/{id}/` | GET | Retrieve a single comment | Yes |
+| `/api/comments/{id}/` | PUT/PATCH | Update your own comment | Yes |
+| `/api/comments/{id}/` | DELETE | Delete your own comment | Yes |
 
 ### Endpoint Details
 
@@ -203,6 +236,77 @@ Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
     "followers_count": 0,
     "following_count": 0,
     "date_joined": "2026-01-01T10:30:00Z"
+}
+```
+
+#### 5. Create a Post
+**POST** `/api/posts/`
+
+**Request Body:**
+```json
+{
+    "title": "My first post",
+    "content": "This is the body of the post"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "id": 10,
+    "author": 1,
+    "author_username": "johndoe",
+    "title": "My first post",
+    "content": "This is the body of the post",
+    "created_at": "2026-01-01T12:00:00Z",
+    "updated_at": "2026-01-01T12:00:00Z"
+}
+```
+
+#### 6. List Posts (paginated + search)
+**GET** `/api/posts/?search=first`
+
+**Response (200 OK):**
+```json
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 10,
+            "author": 1,
+            "author_username": "johndoe",
+            "title": "My first post",
+            "content": "This is the body of the post",
+            "created_at": "2026-01-01T12:00:00Z",
+            "updated_at": "2026-01-01T12:00:00Z"
+        }
+    ]
+}
+```
+
+#### 7. Comment on a Post
+**POST** `/api/comments/`
+
+**Request Body:**
+```json
+{
+    "post": 10,
+    "content": "Nice post!"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "id": 5,
+    "post": 10,
+    "author": 1,
+    "author_username": "johndoe",
+    "content": "Nice post!",
+    "created_at": "2026-01-01T12:05:00Z",
+    "updated_at": "2026-01-01T12:05:00Z"
 }
 ```
 
